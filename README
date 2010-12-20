@@ -6,8 +6,9 @@ I initially converted by hand from AS3 to Javascript
 
 Unfortunately it's currently broken and incomplete in a few ways:
 
-- Collision completely broken :(
+- Collision completely broken :( This is the most crushing problem. You can't make much without collision
 - Transparency problems
 - A few minor classes not yet converted
 - Asset loading system not added (was waiting til I got the library working)
 - Tilemap issue (it draws a little notch on tilemaps for some reason)
+- Problems with sprite rotation (Currently disabled IIRC)
