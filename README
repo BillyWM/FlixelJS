@@ -2,7 +2,7 @@ Direct port of Flixel from AS3 to Javascript (HTML5/Canvas)
 
 I started this project a few months ago and haven't yet completed it (that last 10% is a killer!) but it's been stagnating too long, so I'm releasing what I have to the world, and perhaps someone can fix it up before I do ;)
 
-I initially converted by hand from AS3 to Javascript
+I initially converted by hand from AS3 to Javascript. I realized I would run into many errors that way. I did patch up many that I encountered. Unfortunately, the errors got pretty unruly, and so I went back to convert it automatically - which, yes, I should have done in the first place! At that point I was fatigued with the whole damn thing; the conversion script is almost, but not entirely, complete.
 
 Unfortunately it's currently broken and incomplete in a few ways:
 
@@ -12,3 +12,7 @@ Unfortunately it's currently broken and incomplete in a few ways:
 - Asset loading system not added (was waiting til I got the library working)
 - Tilemap issue (it draws a little notch on tilemaps for some reason)
 - Problems with sprite rotation (Currently disabled IIRC)
+
+I plan on picking this project back up now and getting it in working order, but if you want to hack on it too then pull requests are welcome!
+
+(NOTE: I based my port off the dev branch of Flixel)
