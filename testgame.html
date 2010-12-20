@@ -1,0 +1,70 @@
+<html>
+
+	<head>
+
+		<script type="text/javascript" src="mootools-1.2.5-core-full.js"></script>
+		<script type="text/javascript" src="modernizr-1.5.js"></script>
+		<script type="text/javascript" src="Flixel.js"></script>
+		<script type="text/javascript" src="testgame.js"></script>
+
+		<!--
+
+			new Array instanceof Array	//true
+			[] instanceof Array			//true
+			Array(0) instanceof Array	//true
+			"test" instanceof String	//false!
+			0 instanceof Number			//false
+
+		-->
+
+		<style type="text/css">
+			body {background-color: lightblue;}
+			canvas {border: 1px solid black;}
+		</style>
+
+	</head>
+
+	<body>
+		<canvas id="JSFlixelMainCanvas" width="640" height="480"></canvas>
+		<input id="debugFPS">
+
+		<script type="text/javascript">
+			StageCanvas = $('JSFlixelMainCanvas');
+			StageContext = StageCanvas.getContext('2d');
+
+			//Assets.add('player', 'player.png', 'image');
+			//Assets.add('tileset', 'tileset.png', 'image');
+			//Assets.loadAll();
+			_loaded = 0;
+			_total = 3;
+			_player = new Image();
+			_block = new Image();
+			_tileset = new Image();
+
+			_player.onload = function() { 
+				Assets.images.player = BitmapData.fromImage(_player);
+				_loaded++;
+				if (_loaded == _total) { new Platformer(); }
+			}
+
+			_tileset.onload = function() { 
+				Assets.images.tileset = BitmapData.fromImage(_tileset);
+				_loaded++;
+				if (_loaded == _total) { new Platformer(); }
+			}
+
+			_block.onload = function() { 
+				Assets.images.block = BitmapData.fromImage(_block);
+				_loaded++;
+				if (_loaded == _total) { new Platformer(); }
+			}
+
+			_block.src = 'block.png';
+			_player.src = 'player.png';
+			_tileset.src = 'tileset.png';
+
+		</script>
+
+	</body>
+
+</html>
