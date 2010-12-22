@@ -36,10 +36,6 @@ PlayState = new Class({
 
 		this.stander = this.add(new Stander(100, 10));
 
-		/*for (var j = 0; j < 30; j++) {
-			this.add(new Player(Math.random() * 320, Math.random() * 200));
-		}*/
-
 		for (var i = 0; i < 1000; i++) {
 			if (Math.random() > 0.5) { this.map.setTile(i, 3, 0); }
 		}
@@ -48,7 +44,7 @@ PlayState = new Class({
 		FlxG.followAdjust(0.5, 0.7);
 		FlxG.followBounds(0, -1000, 16000, 2000);
 
-		this.emitter = new FlxEmitter(100,0); //x and y of the emitter
+		this.emitter = new FlxEmitter(100,0);
 		this.emitter.setXSpeed(-200, 200);
 		this.emitter.setYSpeed(-500, 200);
 		this.emitter.gravity = 500;
@@ -63,7 +59,7 @@ PlayState = new Class({
 			this.emitter.add(particle);
 		}
 		 
-		//this.add(this.emitter);
+		this.add(this.emitter);
 
 	},
 
@@ -71,8 +67,8 @@ PlayState = new Class({
 		this.parent();
 
 		FlxU.collide(this.player, this.block);
-		this.boomDelay -= FlxG.elapsed;
-		/*if (this.boomDelay < 0) {
+		/*this.boomDelay -= FlxG.elapsed;
+		if (this.boomDelay < 0) {
 			this.emitter.start(true, 1.2);
 			this.boomDelay = 2;
 		}*/
@@ -137,7 +133,6 @@ Block = new Class({
 
 	initialize: function(X, Y) {
 		this.parent(X, Y);
-		console.log("block", Assets.images.block);
 		this.loadGraphic(Assets.images.block);
 	},
 
