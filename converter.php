@@ -1,15 +1,18 @@
 <?php
-	/*
-		TODO: For general auto-convertor, need to handle user-defined type annotations
-			Need to rewrite annotation removing system completely, as the user could have
-			called their class anything and this could destroy all sorts of unexpected bits of code
-			Perhaps insert spacing into ternary operator statements so that we can safely delete any
-				words after a colon
-		Caveats:
-			Has no respect for string literals. Will munch words inside strings that look like code
-	*/
-	$start = microtime(true);
+/*
+	DESCRIPTION:
+		Converts Flixel's AS3 classes to Mootools-friendly Javascript classes
+		Reads all the .as files in the subdirectories org/flixel and org/flixel/data
 
+	TODO: For general auto-convertor, need to handle user-defined type annotations
+		Need to rewrite annotation removing system completely, as the user could have
+		called their class anything and this could destroy all sorts of unexpected bits of code
+		Perhaps insert spacing into ternary operator statements so that we can safely delete any
+			words after a colon
+
+	Caveats:
+		Has no respect for string literals. Will munch words inside strings that look like code
+*/
 	$as3_class_names = Array(
 		"Rectangle", "Point", "BitmapData", "SoundChannel", "SoundTransform",
 		"Event", "Class", "Matrix", "ColorTransform", "Sprite", "KeyboardEvent", "TextField",
@@ -79,6 +82,7 @@
 	//step through each class...
 	foreach ($all_code as $c) {
 
+		//Figure out what the current class it called and what it inherits from (if anything)
 		preg_match('@(?:dynamic )?(?:public|internal) class (\w+)(?: extends (\w+))?@', $c, $matches);
 		$name = $matches[1];
 
@@ -88,6 +92,8 @@
 
 		//step through each line of the current class
 		foreach ($code_lines as $line) {
+
+			//Count braces to figure out where we are
 			$brace_count += substr_count($line, "{");
 			$brace_count -= substr_count($line, "}");
 			if ($brace_count == 1) {
@@ -96,6 +102,7 @@
 				$in_class = false;
 			}
 
+			//Detect braces that close the method (as opposed to other statements) and jump us out
 			if ($brace_count <= 1) {
 				if ($in_method) {
 					$code_out[] = "}";
@@ -104,10 +111,17 @@
 			}
 
 			if ($in_method) {
-				$line = preg_replace("@([^.])((?:$tokens))@", "$1this.$2", $line);
+				//Match tokens properly delimited (using lookbehind + lookahead regex)
+				//Token must be preceded by something that isn't a period,
+				//	to avoid messing with nested propert refs, and (?=[^\w]) prevents cutting into the
+				//	middle of words
+				//Also ignore anything after "new " so we don't get this: new this.FlxPoint()
+				$line = preg_replace("@(?<=[^.\w])(?<!new )((?:$tokens))(?=[^\w])@", "this.$1", $line);
 				$code_out[] = $line;
 			}
 
+			//When we hit the beginning of a method, pull out relevant parameters and build
+			//		a method definition in MooTools style
 			if ($brace_count == 2 && preg_match('@function (?:(get|set) )?(\w+)\s*\(.*\)@', $line, $m)) {
 				$in_method = true;
 				$get_set = $m[1];
@@ -132,7 +146,7 @@
 
 
 	//echo $str;
-	//var_dump($code_out);
+	var_dump($code_out);
 	//foreach($code_out as $line) { echo "$line\n"; }
 
 
@@ -146,6 +160,7 @@
 
 /*****************************************************************/
 
+	/** Does some pre-processing to normalize the code into an easy-to-parse format **/
 	function class_format($str) {
 
 		global $class_regex;
@@ -187,7 +202,7 @@
 
 	function class_extract($str) {
 
-		///Extracts into into:
+		///Extracts info into:
 		///		$class_name, $extends, $class_constants, $class_props, $class_static, $found_methods
 
 		//Pull out the class name and the class it extends (if any)
@@ -211,7 +226,7 @@
 		preg_match_all('@static (?:public|protected|private|internal) var (\w+);@', $str, $class_static);		
 			//Class methods. Includes getters and setters
 			//NOTE: Had to update parameter capturing to be non-greedy - (.*?) and (.+?) - in case a function is
-			//defined on one, line as with flicker() and flickering() in FlxObject
+			//defined on one line, as with flicker() and flickering() in FlxObject
 		preg_match_all('@(?:override )?(static)?\s*(?:public|protected|private|internal) function (?:(get|set) )?(.+?)\((.*?)\)@', $str, $found_methods);
 
 		///Loop through and separate out getters/setters from other methods
@@ -296,11 +311,11 @@
 		return $files;
 	}
 
-	//List only files with certain extensions
-	//exclude hidden files (starting with . or ending with ~)
-	//	For now, this is not optional, they're just hidden
-	//	* to list files with any extension
-	//Returns: A 2-dimensional array, [full filename] = [name, ext]
+	/**List only files with certain extensions
+		exclude hidden files (starting with . or ending with ~)
+		For now, this is not optional, they're just hidden
+		* to list files with any extension
+	Returns: A 2-dimensional array, [full filename] = [name, ext] **/
 	function list_some_files($allowed_ext, $show_hidden = false) {
 		$files = array();
 		$list = list_files();
