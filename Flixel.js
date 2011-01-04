@@ -17,9 +17,6 @@
 			you're going to do to them is something besides assignment
 */
 
-//Compatibility function that gives IE9 some hope of working
-//FROM: http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx
-//emulate legacy getter/setter API using ES5 APIs
 String.prototype.pad = function(len, chr, side) {
 	chr = (chr === undefined) ? " " : chr;
 
@@ -30,14 +27,20 @@ String.prototype.pad = function(len, chr, side) {
 		t--;
 	}
 	switch (side) {
-		case 'left': return padstr + this; break;
-		case 'right': return this + padstr; break;
+		case 'left': return padstr + this;
+		case 'right': return this + padstr;
+		default: break;
 	}
-}
 
+	return;
+};
+
+//Compatibility function that gives IE9 some hope of working
+//FROM: http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx
+//emulate legacy getter/setter API using ES5 APIs
 try {
    if (!Object.prototype.__defineGetter__ &&
-        Object.defineProperty({},"x",{get: function(){return true}}).x) {
+        Object.defineProperty({},"x",{get: function(){return true;}}).x) {
       Object.defineProperty(Object.prototype, "__defineGetter__",
          {enumerable: false, configurable: true,
           value: function(name,func)
@@ -51,7 +54,7 @@ try {
                  {set:func,enumerable: true,configurable: true});
       }});
    }
-} catch(defPropException) {/*Do nothing if an exception occurs*/};
+} catch(defPropException) {/*Do nothing if an exception occurs*/}
 
 //NOTE: Opera doesn't support createImageData (but we might not need it after all)
 if (!CanvasRenderingContext2D.prototype.createImageData) {
@@ -63,7 +66,7 @@ if (!CanvasRenderingContext2D.prototype.createImageData) {
 		data = c.getContext('2d').getImageData(0, 0, sw, sh);
 		c = null;
 		return data;
-	}
+	};
 }
 
 //imitates the flash.x.y package hierarchy where needed
@@ -86,7 +89,7 @@ flash.utils = new Class({
 
 flash.utils = new flash.utils();
 
-//Each asset is an instance of the Asset class. Global "assets" variable holds reference to
+// Each asset is an instance of the Asset class. Global "assets" variable holds reference to
 //	all of them. Instead of passing a classname to certain Flixel methods, you pass
 //	and asset object - asset.example - and its properties are at
 //		asset.example.name, asset.example.src, etc
@@ -202,8 +205,6 @@ Rectangle = new Class({
 //	which passes the properties onto Canvas in its setTransform method:
 //		setTransform(m11, m12, m21, m22, dx, dy)
 //Not implemented: invert, transformPoint, deltaTransformPoint, createGradientBox
-//NOTE: identity, rotate, scale, translate, concat return void in Flash.
-//		Here they return this, for optional chaining
 Matrix = new Class({
 
 	initialize: function(a, b, c, d, tx, ty) {
@@ -216,7 +217,6 @@ Matrix = new Class({
 		this.u = 0;
 		this.v = 0;
 		this.w = 1;
-
 	},
 
 	identity: function() {
@@ -229,8 +229,6 @@ Matrix = new Class({
 		this.u = 0;
 		this.v = 0;
 		this.w = 1;
-
-		return this;
 	},
 
 	rotate: function(angle) {
@@ -238,24 +236,19 @@ Matrix = new Class({
 		var sin = Math.sin(angle);
 		var mrotate = new Matrix(cos, sin, -sin, cos, 0, 0);
 		this.concat(mrotate);
-
-		return this;
 	},
 
 	scale: function(sx, sy) {
 		var mscale = new Matrix(sx, 0, 0, sy, 0, 0);
 		this.concat(mscale);
-
-		return this;
 	},
 
 	translate: function(dx, dy) {
 		var mtrans = new Matrix(1, 0, 0, 1, dx, dy);
 		this.concat(mtrans);
-
-		return this;
 	},
 
+	//deep copy
 	clone: function() {
 		return new Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
 	},
@@ -273,8 +266,6 @@ Matrix = new Class({
 		this.d = mcon.d;
 		this.tx = mcon.tx;
 		this.ty = mcon.ty;
-
-		return this;
 	},
 
 	//"Using the createBox() method lets you obtain the same matrix as you would if you
@@ -313,7 +304,7 @@ Matrix = new Class({
 		mfinal.ty = (this.b * m2.tx) + (this.d * m2.ty) + this.ty;
 
 		return mfinal;
-	},
+	}
 
 });
 
@@ -351,7 +342,7 @@ BitmapData = new Class({
 		this._canvas.height = this.height;
 		this.context = this._canvas.getContext('2d');
 
-		//FIXME: Temporarily disabled fill in researching alpha problems
+		//FIXME: Temporarily disabled fill while researching alpha problems
 		this.context.save();
 			var a;
 		this.context.fillStyle = a = this.makeRGBA(FillColor);
@@ -412,7 +403,7 @@ BitmapData = new Class({
 			b = (d.data[i+2] * ct.blueMultiplier) + ct.blueOffset;
 			a = (d.data[i+3] * ct.alphaMultiplier) + ct.alphaOffset;
 
-			//clamp values. Not pretty but faster than function calls
+			//clamp values.
 			r = (r > 255) ? 255 : r;		r = (r < 0) ? 0 : r;
 			g = (g > 255) ? 255 : g;		g = (g < 0) ? 0 : g;
 			b = (b > 255) ? 255 : b;		b = (b < 0) ? 0 : b;
@@ -469,7 +460,7 @@ BitmapData = new Class({
 		b.draw(this);
 
 		return b;
-	},
+	}
 
 
 });
@@ -2690,7 +2681,7 @@ FlxTilemap = new Class({
 			while(c < iw)
 			{
 				if(c >= this.widthInTiles) break;
-				dd = Math.floor(this._data[d+c]); //NOTE "as uint" cast
+				dd = Math.floor(this._data[d+c]);
 				if(dd >= this.collideIndex)
 					blocks.push({
 						x : this.x + (ix+c) * this._tileWidth,
@@ -2718,7 +2709,6 @@ FlxTilemap = new Class({
 
 	overlapsPoint: function(X, Y,PerPixel) {
 		PerPixel = (PerPixel === undefined) ? false : PerPixel;
-		//NOTE: Expanded this for readability. Also, Math.floor actually uint casts
 		var t = getTile(
 				Math.floor( (X-this.x) / this._tileWidth ),
 				Math.floor( (Y-this.y) / this._tileHeight)
@@ -2769,7 +2759,7 @@ FlxTilemap = new Class({
 			c = ix;
 			while(c < iw)
 			{
-				if(Math.floor(this._data[rs+c]) >= this.collideIndex) //NOTE as uint cast on _data[rs+c]
+				if(Math.floor(this._data[rs+c]) >= this.collideIndex)
 					this.colOffsets[col++] = new FlxPoint(this.x + c * this._tileWidth, this.y + r * this._tileHeight);
 				c++;
 			}
@@ -2820,7 +2810,7 @@ FlxTilemap = new Class({
 		
 		//If this map is autotiled and it changes, locally update the arrangement
 		var i;
-		var r = Math.floor(Index/this.widthInTiles) - 1; //NOTE: int cast
+		var r = Math.floor(Index/this.widthInTiles) - 1;
 		var rl = r + 3;
 		var c = Index % this.widthInTiles - 1;
 		var cl = c + 3;
@@ -2888,7 +2878,7 @@ FlxTilemap = new Class({
 			
 			tx = curX/this._tileWidth;
 			ty = curY/this._tileHeight;
-			if((Math.floor(this._data[ty*this.widthInTiles+tx])) >= this.collideIndex) //NOTE: uint cast on lefthand part
+			if((Math.floor(this._data[ty*this.widthInTiles+tx])) >= this.collideIndex)
 			{
 				//Some basic helper stuff
 				tx *= this._tileWidth;
@@ -3756,7 +3746,7 @@ FlxEmitter = new Class({
 		while(i < Quantity)
 		{
 			if((Collide > 0) && (Bounce > 0))
-				s = new FlxParticle(Bounce); //NOTE: as FlxSprite cast
+				s = new FlxParticle(Bounce);
 			else
 				s = new FlxSprite();
 			if(Multiple)
@@ -4264,7 +4254,7 @@ FlxMouse = new Class({
 	//		FIREFOX: Up is -3, down is 3 (event.detail)
 	//		CHOME: Up is +120, down is -120 (event.wheelDelta)
 	//Luckily, all 3 can prevent default (no page scrolling)
-	//TODO: Ensure that preventing scrolling only applies to in game window
+	//TODO: Ensure that preventing scrolling only applies to in-game window
 	//		When the users moves out of the window they should scroll again
 	handleMouseWheel: function(e) {
 
@@ -4796,7 +4786,7 @@ FlxGame = new Class({
 
 	showSoundTray: function(Silent) {
 
-		return; //FIXME: Bypassing this whole thing. Not using sound try right now, also there's no SndBeep
+		return; //FIXME: Bypassing this whole thing. Not using sound tray right now, also there's no SndBeep
 
 		Silent = (Silent === undefined) ? false : Silent;
 
