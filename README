@@ -6,7 +6,7 @@ I initially converted by hand from AS3 to Javascript. I realized I would run int
 
 Unfortunately it's currently broken and incomplete in a few ways:
 
-- Collision completely broken :( This is the most crushing problem. You can't make much without collision
+- <strike>Collision completely broken :( This is the most crushing problem. You can't make much without collision</strike>
 - Transparency problems
 - A few minor classes not yet converted
 - Asset loading system not added (was waiting til I got the library working)
