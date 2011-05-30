@@ -67,11 +67,6 @@ PlayState = new Class({
 		this.parent();
 
 		FlxU.collide(this.player, this.block);
-		/*this.boomDelay -= FlxG.elapsed;
-		if (this.boomDelay < 0) {
-			this.emitter.start(true, 1.2);
-			this.boomDelay = 2;
-		}*/
 
 		if (FlxG.keys.justPressed("SPACE")) {
 			this.emitter.at(this.player);
